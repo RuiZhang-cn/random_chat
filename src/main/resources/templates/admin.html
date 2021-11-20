@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>admin</title>
+</head>
+<body>
+<p>总连接数:</p>
+<p th:text="${webSocketSet.size()}"></p>
+<ul th:each="cs,webSocket:${webSocketSet}" style="border: blue solid 1px;list-style:none">
+    <li>用户id：<p th:text="${cs.value.getId()}"></p></li>
+    <li>对方id：<p th:text="${cs.value.getToUser()!=null?cs.value.getToUser():'正在等待连接'}"></p></li>
+</ul>
+</body>
+</html>
