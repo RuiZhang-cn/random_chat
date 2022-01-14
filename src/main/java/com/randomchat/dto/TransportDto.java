@@ -23,19 +23,27 @@ public class TransportDto {
     private Integer code;
     private String msg;
     private String toUserId;
+    /**
+     * 0文本1图片;
+     */
+    private Integer type;
     private boolean success;
 
     public static TransportDto SUCCESS(Integer code,String msg) {
-        return new TransportDto(code,msg,null,true);
+        return new TransportDto(code,msg,null,0,true);
+    }
+    public static TransportDto SUCCESSIMG(Integer code,String msg) {
+        return new TransportDto(code,msg,null,1,true);
     }
     public static TransportDto ERROR(Integer code,String msg) {
-        return new TransportDto(code,msg,null,false);
+        return new TransportDto(code,msg,null,0,false);
     }
 
-    public TransportDto(Integer code, String msg, String toUserId, boolean success) {
+    public TransportDto(Integer code, String msg, String toUserId,Integer type, boolean success) {
         this.code = code;
         this.msg = msg;
         this.toUserId = toUserId;
+        this.type = type;
         this.success = success;
     }
 }

@@ -27,6 +27,31 @@ function send(){
 		$('#neirong').val('');
 	}
 }
+function upload_file(){
+ var formData = new FormData();
+    // Attach file
+    formData.append('file', document.getElementById('input_upload').files[0]);
+    // console.log(formData);
+
+    $.ajax({
+      url: '/uploadFile',
+      data: formData,
+      method: 'POST',
+      contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+      processData: false, // NEEDED, DON'T OMIT THIS
+      success: function(result) {
+      $('#UI').append("<div class=\"cright cmsg\">\n" +
+      			"\t\t\t\t\t\t<img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\"  src=\"/images/A.png\" />\n" +
+      			"\t\t\t\t\t\t<span class=\"name\"> &nbsp; </span>\n" +
+      			"\t\t\t\t\t\t<span class=\"content\"><img src=\"/file/"+result+"\"/></span>\n" +
+      			"\t\t\t\t\t</div>");
+      websocket.send(data);
+      },
+      error: function(responseStr) {
+        alert("error", responseStr);
+      }
+    });
+}
 function extracted() {
 	//判断当前浏览器是否支持WebSocket
 	if ('WebSocket' in window) {
@@ -60,12 +85,21 @@ function extracted() {
 		var obj = jQuery.parseJSON(event.data.replace("\\\"", "\""));
 		if (obj.code==1000){
 			console.log(obj.code);
+			if(obj.type==1){
+			 $('#UI').append("<div class=\"cright cmsg\">\n" +
+                  			"\t\t\t\t\t\t<img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\"  src=\"/images/A.png\" />\n" +
+                  			"\t\t\t\t\t\t<span class=\"name\"> &nbsp; </span>\n" +
+                  			"\t\t\t\t\t\t<span class=\"content\"><img src=\"/file/"+result+"\"/></span>\n" +
+                  			"\t\t\t\t\t</div>");
+                  			return;
+			}else{
 			$('#UI').append("\n" +
 				"             \t\t<div class=\"cleft cmsg\">\n" +
 				"             \t\t    <img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\" src=\"/images/A.png\" />\n" +
 				"             \t\t    <span class=\"name\"> &nbsp; </span>\n" +
 				"             \t\t    <span class=\"content\">"+obj.msg+"</span>\n" +
 				"             \t\t</div>")
+				}
 		}else if (obj.code == 1003) {
 			$('#neirong').removeAttr("disabled");
 			$('#UI').append("<div class=\"tips\">\n" +

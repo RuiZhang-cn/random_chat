@@ -151,6 +151,9 @@ public class WebSocketServer {
     public static void sendtoUser(Session session, String message, String sendUserId, Integer code) throws IOException {
         WebSocketServer UserId = webSocketSet.get(sendUserId);
         if (UserId != null) {
+            if (message.startsWith("img:")){
+                UserId.sendMessage(TransportDto.SUCCESSIMG(code, message.substring(message.indexOf(":")+1)));
+            }
             UserId.sendMessage(TransportDto.SUCCESS(code, message));
         }else {
             SendSelf(session, TransportEnum.TO_USERR_ERROR.getTransportDto());
@@ -176,6 +179,7 @@ public class WebSocketServer {
             }
         }
     }
+
     /**
      * 发送信息给所有人
      * @param message
