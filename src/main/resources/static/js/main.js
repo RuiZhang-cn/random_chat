@@ -30,7 +30,17 @@ function send(){
 function extracted() {
 	//判断当前浏览器是否支持WebSocket
 	if ('WebSocket' in window) {
-		websocket = new WebSocket("ws://" + host + "/websocket");
+        var protocolStr = document.location.protocol;
+        if(protocolStr == "http:")
+        {
+       	    websocket = new WebSocket("ws://" + host + "/websocket");
+        }
+        else if(protocolStr == "https:")
+        {
+         	websocket = new WebSocket("wss://" + host + "/websocket");
+        }else{
+        		alert('你的浏览器不支持该网站');
+        }
 	} else {
 		alert('你的浏览器不支持该网站');
 	}
