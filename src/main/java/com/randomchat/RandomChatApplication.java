@@ -16,7 +16,8 @@ public class RandomChatApplication {
 
     @Bean
     public AES aes(){
-        return new AES(Mode.CTS, Padding.PKCS5Padding, "lizhou205000!@#$%^&".getBytes(), "0102030405060708".getBytes());
+        //由于AES的秘钥规定是16位秘钥
+        return new AES(Mode.CTS, Padding.PKCS5Padding, "LiZHou1233FH%^&*".getBytes(), "0102030405060708".getBytes());
     }
 
 }
