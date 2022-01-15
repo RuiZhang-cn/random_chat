@@ -153,8 +153,11 @@ public class WebSocketServer {
         if (UserId != null) {
             if (message.startsWith("img:")){
                 UserId.sendMessage(TransportDto.SUCCESSIMG(code, message.substring(message.indexOf(":")+1)));
+            }else if (message.startsWith("video:")){
+                UserId.sendMessage(TransportDto.SUCCESSVIDEO(code, message.substring(message.indexOf(":")+1)));
+            }else {
+                UserId.sendMessage(TransportDto.SUCCESS(code, message));
             }
-            UserId.sendMessage(TransportDto.SUCCESS(code, message));
         }else {
             SendSelf(session, TransportEnum.TO_USERR_ERROR.getTransportDto());
         }

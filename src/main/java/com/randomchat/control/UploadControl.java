@@ -1,32 +1,48 @@
 package com.randomchat.control;
 
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.crypto.Mode;
+import cn.hutool.crypto.Padding;
+import cn.hutool.crypto.symmetric.AES;
 import com.randomchat.util.FileTypeUtil;
-import com.randomchat.websocket.WebSocketServer;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.UUID;
 
 @RestController
+@Slf4j
 public class UploadControl {
+    @Value("${filepath}")
+    private String FILE_PATH;
 
-    @GetMapping("/file/{filePath}")
-    public String getFile(@PathVariable String filePath, HttpServletResponse response) throws IOException {
-        File file = new File(filePath);
+    @Autowired
+    private AES aes;
+
+
+    @GetMapping(value = "/file/{filePath}",produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getFile(@PathVariable String filePath, HttpServletResponse response) throws IOException {
+        File file = new File(FILE_PATH+filePath);
+        log.info("获取图片路径为:{}",filePath);
+
         if (file.exists()) {
             FileInputStream fileInputStream = new FileInputStream(file);
-            // 创建流的最大字节数组
-            byte[] inOutBytes = new byte[fileInputStream.available()];
-            fileInputStream.read(inOutBytes);
-            response.getOutputStream().write(inOutBytes);
+            return aes.decrypt(IoUtil.readBytes(fileInputStream));
         }
-        return "文件不存在!";
+        return null;
     }
 
     @PostMapping("/uploadFile")
@@ -35,16 +51,32 @@ public class UploadControl {
         if (originalFilename == null) {
             return "上传失败!";
         }
-        String ex = originalFilename.substring(originalFilename.lastIndexOf(".")+1);
+        String ex = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String filename = UUID.randomUUID().toString().concat(ex);
         if(FileTypeUtil.FileTypeMap.get(ex.toLowerCase(Locale.ROOT)).equals(FileTypeUtil.FILE_TYPE_IMG)){
-            File file1 = new File(originalFilename);
-            if (file1.exists()){
-                file1=new File(UUID.randomUUID().toString().concat(ex));
-            }
-            file.transferTo(file1);
-            return file1.getPath();
+            FileOutputStream fileOutputStream=new FileOutputStream(FILE_PATH.concat(filename));
+            aes.encrypt(file.getInputStream(),fileOutputStream,true);
+            return filename;
+        }else if (FileTypeUtil.FileTypeMap.get(ex.toLowerCase(Locale.ROOT)).equals(FileTypeUtil.FILE_TYPE_VIDEO)){
+            FileOutputStream fileOutputStream=new FileOutputStream(FILE_PATH.concat(filename));
+            aes.encrypt(file.getInputStream(),fileOutputStream,true);
+            return filename;
         }
         System.out.println(originalFilename);
         return "上传失败!";
+    }
+
+    public static void main(String[] args) throws Exception {
+        String content = "0123456789ABHAEQ";
+
+        AES aes = new AES(Mode.CTS, Padding.PKCS5Padding, "0CoJUm6Qyw8W8jud".getBytes(), "0102030405060708".getBytes());
+
+
+        FileInputStream fileInputStream = new FileInputStream("pom.xml");
+        FileOutputStream fileOutputStream = new FileOutputStream("pomjiami.xml");
+        aes.encrypt(fileInputStream, fileOutputStream, true);
+        FileInputStream pomjiami = new FileInputStream("pomjiami.xml");
+        FileOutputStream pomjiemi = new FileOutputStream("pomjiemi.xml");
+        aes.decrypt(pomjiami, pomjiemi, true);
     }
 }

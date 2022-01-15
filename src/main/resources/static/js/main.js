@@ -27,6 +27,8 @@ function send(){
 		$('#neirong').val('');
 	}
 }
+
+
 function upload_file(){
  var formData = new FormData();
     // Attach file
@@ -40,12 +42,26 @@ function upload_file(){
       contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
       processData: false, // NEEDED, DON'T OMIT THIS
       success: function(result) {
-      $('#UI').append("<div class=\"cright cmsg\">\n" +
-      			"\t\t\t\t\t\t<img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\"  src=\"/images/A.png\" />\n" +
-      			"\t\t\t\t\t\t<span class=\"name\"> &nbsp; </span>\n" +
-      			"\t\t\t\t\t\t<span class=\"content\"><img src=\"/file/"+result+"\"/></span>\n" +
-      			"\t\t\t\t\t</div>");
-      websocket.send(data);
+		  var ex = result.substring(result.lastIndexOf("."));
+		  if (ex===".jpg"||
+			ex===".jpeg"||
+			ex===".png"||
+			ex===".gif"
+		){
+			  $('#UI').append("<div class=\"cright cmsg\">\n" +
+				  "\t\t\t\t\t\t<img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\"  src=\"/images/A.png\" />\n" +
+				  "\t\t\t\t\t\t<span class=\"name\"> &nbsp; </span>\n" +
+				  "\t\t\t\t\t\t<span class=\"content\"><img src=\"/file/"+result+"\"/></span>\n" +
+				  "\t\t\t\t\t</div>");
+			  websocket.send("img:"+result);
+		  }else {
+			  $('#UI').append("<div class=\"cright cmsg\">\n" +
+				  "\t\t\t\t\t\t<img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\"  src=\"/images/A.png\" />\n" +
+				  "\t\t\t\t\t\t<span class=\"name\"> &nbsp; </span>\n" +
+				  "\t\t\t\t\t\t<span class=\"content\"><video width=\"320\" height=\"240\" controls><source type='video/mp4' src='/file/" + result + "'></video></span>\n" +
+				  "\t\t\t\t\t</div>")
+			  websocket.send("video:"+result);
+		  }
       },
       error: function(responseStr) {
         alert("error", responseStr);
@@ -86,13 +102,18 @@ function extracted() {
 		if (obj.code==1000){
 			console.log(obj.code);
 			if(obj.type==1){
-			 $('#UI').append("<div class=\"cright cmsg\">\n" +
+			 $('#UI').append("<div class=\"cleft cmsg\">\n" +
                   			"\t\t\t\t\t\t<img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\"  src=\"/images/A.png\" />\n" +
                   			"\t\t\t\t\t\t<span class=\"name\"> &nbsp; </span>\n" +
-                  			"\t\t\t\t\t\t<span class=\"content\"><img src=\"/file/"+result+"\"/></span>\n" +
+                  			"\t\t\t\t\t\t<span class=\"content\"><img src=\"/file/"+obj.msg+"\"/></span>\n" +
                   			"\t\t\t\t\t</div>");
-                  			return;
-			}else{
+			}else if (obj.type == 2) {
+				$('#UI').append("<div class=\"cleft cmsg\">\n" +
+					"\t\t\t\t\t\t<img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\"  src=\"/images/A.png\" />\n" +
+					"\t\t\t\t\t\t<span class=\"name\"> &nbsp; </span>\n" +
+					"\t\t\t\t\t\t<span class=\"content\"><video width=\"320\" height=\"240\" controls><source type='video/mp4' src='/file/" + result + "'></video></span>\n" +
+					"\t\t\t\t\t</div>")
+			} else{
 			$('#UI').append("\n" +
 				"             \t\t<div class=\"cleft cmsg\">\n" +
 				"             \t\t    <img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\" src=\"/images/A.png\" />\n" +

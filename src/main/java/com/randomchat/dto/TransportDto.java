@@ -24,7 +24,7 @@ public class TransportDto {
     private String msg;
     private String toUserId;
     /**
-     * 0文本1图片;
+     * 0文本1图片2视频;
      */
     private Integer type;
     private boolean success;
@@ -34,6 +34,9 @@ public class TransportDto {
     }
     public static TransportDto SUCCESSIMG(Integer code,String msg) {
         return new TransportDto(code,msg,null,1,true);
+    }
+    public static TransportDto SUCCESSVIDEO(Integer code,String msg) {
+        return new TransportDto(code,msg,null,2,true);
     }
     public static TransportDto ERROR(Integer code,String msg) {
         return new TransportDto(code,msg,null,0,false);
