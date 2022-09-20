@@ -24,15 +24,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2019/12/9 -上午 9:56
  **/
 @Controller
-public class AdminConifg {
+public class AdminControl {
     @Value("${adminCode}")
     private String adminCode;
 
-    @GetMapping("/admin/{ac}")
-    public String toAdmin(@PathVariable String ac, Model model) {
-        if (adminCode.equals(ac)) {
+    @GetMapping("/admin/{password}")
+    public String toAdmin(@PathVariable String password, Model model) {
+        if (adminCode.equals(password)) {
             ConcurrentHashMap<String, WebSocketServer> webSocketSet = WebSocketServer.webSocketSet;
-            //连接人数
+            //连接详情
             model.addAttribute("webSocketSet", webSocketSet);
             return "admin";
         } else {

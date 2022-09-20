@@ -1,5 +1,6 @@
 package com.randomchat.websocket;
 
+import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;
 import com.randomchat.dto.TransportDto;
 import com.randomchat.dto.TransportEnum;
@@ -14,6 +15,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 

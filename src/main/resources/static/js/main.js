@@ -111,7 +111,7 @@ function extracted() {
 				$('#UI').append("<div class=\"cleft cmsg\">\n" +
 					"\t\t\t\t\t\t<img class=\"headIcon radius\" ondragstart=\"return false;\"  oncontextmenu=\"return false;\"  src=\"/images/A.png\" />\n" +
 					"\t\t\t\t\t\t<span class=\"name\"> &nbsp; </span>\n" +
-					"\t\t\t\t\t\t<span class=\"content\"><video width=\"320\" height=\"240\" controls><source type='video/mp4' src='/file/" + result + "'></video></span>\n" +
+					"\t\t\t\t\t\t<span class=\"content\"><video width=\"320\" height=\"240\" controls><source type='video/mp4' src='/file/" + obj.msg + "'/></video></span>\n" +
 					"\t\t\t\t\t</div>")
 			} else{
 			$('#UI').append("\n" +

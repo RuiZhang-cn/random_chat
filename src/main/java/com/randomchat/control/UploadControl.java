@@ -1,5 +1,6 @@
 package com.randomchat.control;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.crypto.Mode;
 import cn.hutool.crypto.Padding;
@@ -53,30 +54,17 @@ public class UploadControl {
         }
         String ex = originalFilename.substring(originalFilename.lastIndexOf("."));
         String filename = UUID.randomUUID().toString().concat(ex);
-        if(FileTypeUtil.FileTypeMap.get(ex.toLowerCase(Locale.ROOT)).equals(FileTypeUtil.FILE_TYPE_IMG)){
-            FileOutputStream fileOutputStream=new FileOutputStream(FILE_PATH.concat(filename));
+        if(FileTypeUtil.FILE_TYPE_IMG.equals(FileTypeUtil.FileTypeMap.get(ex.toLowerCase(Locale.ROOT)))){
+            File tempFile = FileUtil.touch(FILE_PATH.concat(filename));
+            FileOutputStream fileOutputStream=new FileOutputStream(tempFile);
             aes.encrypt(file.getInputStream(),fileOutputStream,true);
             return filename;
-        }else if (FileTypeUtil.FileTypeMap.get(ex.toLowerCase(Locale.ROOT)).equals(FileTypeUtil.FILE_TYPE_VIDEO)){
-            FileOutputStream fileOutputStream=new FileOutputStream(FILE_PATH.concat(filename));
+        }else if (FileTypeUtil.FILE_TYPE_VIDEO.equals(FileTypeUtil.FileTypeMap.get(ex.toLowerCase(Locale.ROOT)))){
+            File tempFile = FileUtil.touch(FILE_PATH.concat(filename));
+            FileOutputStream fileOutputStream=new FileOutputStream(tempFile);
             aes.encrypt(file.getInputStream(),fileOutputStream,true);
             return filename;
         }
-        System.out.println(originalFilename);
-        return "上传失败!";
-    }
-
-    public static void main(String[] args) throws Exception {
-        String content = "0123456789ABHAEQ";
-
-        AES aes = new AES(Mode.CTS, Padding.PKCS5Padding, "0CoJUm6Qyw8W8jud".getBytes(), "0102030405060708".getBytes());
-
-
-        FileInputStream fileInputStream = new FileInputStream("pom.xml");
-        FileOutputStream fileOutputStream = new FileOutputStream("pomjiami.xml");
-        aes.encrypt(fileInputStream, fileOutputStream, true);
-        FileInputStream pomjiami = new FileInputStream("pomjiami.xml");
-        FileOutputStream pomjiemi = new FileOutputStream("pomjiemi.xml");
-        aes.decrypt(pomjiami, pomjiemi, true);
+        return "上传失败!格式不支持!";
     }
 }
